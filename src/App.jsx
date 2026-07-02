@@ -1,121 +1,105 @@
+// src/App.jsx
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { ThemeProvider } from './components/theme-provider'
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from './components/ui/resizable'
+import { Button } from './components/ui/button'
+import { Toolbar } from './components/Toolbar'
+import { Preview } from './components/Preview'
+import { GuidePopover } from './components/GuidePopover'
+import { useLocalStorage } from './hooks/useLocalStorage'
+import { Download, Copy } from 'lucide-react'
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Use localStorage to auto-save the README content
+  const [markdown, setMarkdown] = useLocalStorage('readme-content', `# My Awesome Project
+
+## Features
+- Feature 1
+- Feature 2
+- Feature 3
+
+## Installation
+\`\`\`bash
+npm install
+\`\`\`
+
+## Usage
+\`\`\`javascript
+console.log("Hello World");
+\`\`\`
+`)
+
+  // Function to export as .md file
+  const exportMarkdown = () => {
+    const blob = new Blob([markdown], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'README.md'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  // Function to copy to clipboard
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(markdown)
+      // You could add a toast notification here
+      console.log('Copied!')
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <div className="h-screen flex flex-col bg-background text-foreground">
+        {/* Header */}
+        <header className="border-b border-border p-4 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold text-primary">📝 README Builder</h1>
+            <GuidePopover />
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={exportMarkdown}>
+              <Download className="h-4 w-4 mr-2" /> Export MD
+            </Button>
+            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={copyToClipboard}>
+              <Copy className="h-4 w-4 mr-2" /> Copy
+            </Button>
+          </div>
+        </header>
 
-      <div className="ticks"></div>
+        {/* Toolbar */}
+        <Toolbar markdown={markdown} setMarkdown={setMarkdown} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        {/* Main Content - Split View */}
+        <ResizablePanelGroup direction="horizontal" className="flex-1">
+          {/* Editor Panel */}
+          <ResizablePanel defaultSize={50} minSize={30}>
+            <div className="h-full relative">
+              <textarea
+                value={markdown}
+                onChange={(e) => setMarkdown(e.target.value)}
+                className="w-full h-full p-4 bg-background text-foreground resize-none outline-none font-mono text-sm"
+                placeholder="Write your README here..."
+                spellCheck="false"
+              />
+              <div className="absolute bottom-2 right-4 text-xs text-muted-foreground">
+                {markdown.split(/\s+/).filter(Boolean).length} words
+              </div>
+            </div>
+          </ResizablePanel>
+          
+          <ResizableHandle withHandle />
+          
+          {/* Preview Panel */}
+          <ResizablePanel defaultSize={50} minSize={30}>
+            <Preview markdown={markdown} />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+    </ThemeProvider>
   )
 }
 
