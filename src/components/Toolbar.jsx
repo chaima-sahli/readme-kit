@@ -1,4 +1,3 @@
-// src/components/Toolbar.jsx
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import {
@@ -6,33 +5,58 @@ import {
   Bold, Italic, Code,
   List, ListOrdered,
   Table, Link, Image,
-  FileCode, // ← NEW: Import for code block icon
+  FileCode,
 } from 'lucide-react';
 
-export function Toolbar({ markdown, setMarkdown }) {
-  // Function to get current textarea and selection
-  const getTextarea = () => document.querySelector('textarea');
-  
-  // Function to wrap selected text or insert at cursor
-  const wrapText = (prefix, suffix = '') => {
-    const textarea = getTextarea();
-    if (!textarea) return;
+export function Toolbar({ markdown, setMarkdown, editorRef }) {
+  // Get the editor view from the ref
+  const getView = () => {
+    if (!editorRef?.current) {
+      console.log('Editor ref not available');
+      return null;
+    }
+    const view = editorRef.current.getView?.();
+    if (!view) {
+      console.log('View not available yet');
+      return null;
+    }
+    return view;
+  };
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = markdown.substring(start, end);
+  // Get current selection from CodeMirror
+  const getSelection = () => {
+    const view = getView();
+    if (!view) return { start: 0, end: 0, selectedText: '' };
+    
+    const selection = view.state.selection.main;
+    const start = selection.from;
+    const end = selection.to;
+    const selectedText = view.state.sliceDoc(start, end);
+    
+    return { start, end, selectedText };
+  };
+
+  // Insert text at cursor position
+  const insertText = (prefix, suffix = '') => {
+    const view = getView();
+    if (!view) {
+      console.log('No view available, using fallback');
+      // Fallback: append to the end
+      setMarkdown(markdown + '\n' + prefix + suffix);
+      return;
+    }
+
+    const { start, end, selectedText } = getSelection();
     
     let newText;
     let cursorOffset = 0;
     
     if (selectedText) {
-      // If text is selected, wrap it
       newText = markdown.substring(0, start) + 
                 prefix + selectedText + suffix + 
                 markdown.substring(end);
       cursorOffset = prefix.length + selectedText.length + suffix.length;
     } else {
-      // If no text selected, just insert and place cursor inside
       newText = markdown.substring(0, start) + 
                 prefix + suffix + 
                 markdown.substring(end);
@@ -41,38 +65,39 @@ export function Toolbar({ markdown, setMarkdown }) {
     
     setMarkdown(newText);
     
-    // Set cursor position after insertion
+    // Focus and set cursor after update
     setTimeout(() => {
-      const newCursorPos = start + cursorOffset;
-      textarea.selectionStart = newCursorPos;
-      textarea.selectionEnd = newCursorPos;
-      textarea.focus();
-    }, 0);
+      view.focus();
+      const newPos = start + cursorOffset;
+      view.dispatch({
+        selection: { anchor: newPos, head: newPos },
+      });
+    }, 10);
   };
 
-  // Insert heading at current line
+  // Insert heading
   const insertHeading = (level) => {
-    const textarea = getTextarea();
-    if (!textarea) return;
+    const view = getView();
+    if (!view) {
+      setMarkdown(markdown + '\n' + '#'.repeat(level) + ' ');
+      return;
+    }
     
-    const start = textarea.selectionStart;
+    const { start } = getSelection();
     const lineStart = markdown.lastIndexOf('\n', start - 1) + 1;
     const lineEnd = markdown.indexOf('\n', start);
     const currentLine = markdown.substring(lineStart, lineEnd === -1 ? markdown.length : lineEnd);
     
-    // Check if the line already starts with #s
     const headingMatch = currentLine.match(/^(#+)\s*/);
     const newPrefix = '#'.repeat(level) + ' ';
     
     let newText;
     if (headingMatch) {
-      // Replace existing heading level
       newText = markdown.substring(0, lineStart) + 
                 newPrefix + 
                 currentLine.substring(headingMatch[0].length) + 
                 markdown.substring(lineEnd === -1 ? markdown.length : lineEnd);
     } else {
-      // Insert new heading
       newText = markdown.substring(0, lineStart) + 
                 newPrefix + 
                 currentLine + 
@@ -80,79 +105,73 @@ export function Toolbar({ markdown, setMarkdown }) {
     }
     
     setMarkdown(newText);
-    
-    // Focus back on textarea
-    setTimeout(() => textarea.focus(), 0);
+    setTimeout(() => view.focus(), 10);
   };
 
   // Insert list item
   const insertListItem = (ordered = false) => {
-    const textarea = getTextarea();
-    if (!textarea) return;
+    const view = getView();
+    if (!view) {
+      setMarkdown(markdown + '\n' + (ordered ? '1. ' : '- '));
+      return;
+    }
     
-    const start = textarea.selectionStart;
+    const { start } = getSelection();
     const lineStart = markdown.lastIndexOf('\n', start - 1) + 1;
     const currentLine = markdown.substring(lineStart, start);
     
-    // Check if we're on an empty line or start of line
     const isStartOfLine = currentLine.trim() === '';
+    const prefix = ordered ? '1. ' : '- ';
     
     let newText;
     if (isStartOfLine) {
-      // Insert new list item at current line
-      const prefix = ordered ? '1. ' : '- ';
       newText = markdown.substring(0, lineStart) + 
                 prefix + 
                 markdown.substring(lineStart);
     } else {
-      // Insert new list item on a new line
-      const prefix = ordered ? '1. ' : '- ';
       newText = markdown.substring(0, start) + 
                 '\n' + prefix + 
                 markdown.substring(start);
     }
     
     setMarkdown(newText);
-    
-    // Focus back on textarea
-    setTimeout(() => textarea.focus(), 0);
+    setTimeout(() => view.focus(), 10);
   };
 
-  // NEW: Insert code block
+  // Insert code block
   const insertCodeBlock = () => {
-    const textarea = getTextarea();
-    if (!textarea) return;
+    const view = getView();
+    if (!view) {
+      setMarkdown(markdown + '\n```js\n\n```');
+      return;
+    }
     
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = markdown.substring(start, end);
+    const { start, end, selectedText } = getSelection();
     
     let newText;
     let cursorOffset = 0;
     
     if (selectedText) {
-      // Wrap selected text in a code block
       newText = markdown.substring(0, start) + 
                 '```js\n' + selectedText + '\n```' + 
                 markdown.substring(end);
-      cursorOffset = 7 + selectedText.length + 4; // ```js\n + text + \n```
+      cursorOffset = 7 + selectedText.length + 4;
     } else {
-      // Insert empty code block with cursor inside
       newText = markdown.substring(0, start) + 
                 '```js\n\n```' + 
                 markdown.substring(start);
-      cursorOffset = 7; // Position cursor after ```js\n
+      cursorOffset = 7;
     }
     
     setMarkdown(newText);
     
-    // Set cursor position after insertion
     setTimeout(() => {
-      const newCursorPos = start + cursorOffset;
-      textarea.selectionStart = newCursorPos;
-      textarea.selectionEnd = newCursorPos;
-      textarea.focus();
-    }, 0);
+      view.focus();
+      const newPos = start + cursorOffset;
+      view.dispatch({
+        selection: { anchor: newPos, head: newPos },
+      });
+    }, 10);
   };
 
   return (
@@ -171,19 +190,15 @@ export function Toolbar({ markdown, setMarkdown }) {
       <Separator orientation="vertical" className="mx-1 h-6" />
 
       {/* Formatting */}
-      <Button variant="ghost" size="sm" onClick={() => wrapText('**', '**')} title="Bold (Ctrl+B)">
+      <Button variant="ghost" size="sm" onClick={() => insertText('**', '**')} title="Bold (Ctrl+B)">
         <Bold className="h-4 w-4" />
       </Button>
-      <Button variant="ghost" size="sm" onClick={() => wrapText('*', '*')} title="Italic (Ctrl+I)">
+      <Button variant="ghost" size="sm" onClick={() => insertText('*', '*')} title="Italic (Ctrl+I)">
         <Italic className="h-4 w-4" />
       </Button>
-      
-      {/* Inline Code */}
-      <Button variant="ghost" size="sm" onClick={() => wrapText('`', '`')} title="Inline Code">
+      <Button variant="ghost" size="sm" onClick={() => insertText('`', '`')} title="Inline Code">
         <Code className="h-4 w-4" />
       </Button>
-      
-      {/* NEW: Code Block */}
       <Button variant="ghost" size="sm" onClick={insertCodeBlock} title="Code Block">
         <FileCode className="h-4 w-4" />
       </Button>
@@ -200,7 +215,7 @@ export function Toolbar({ markdown, setMarkdown }) {
 
       <Separator orientation="vertical" className="mx-1 h-6" />
 
-      {/* Insert - Placeholders */}
+      {/* Placeholders */}
       <Button variant="ghost" size="sm" title="Insert Table (Coming soon)">
         <Table className="h-4 w-4" />
       </Button>
@@ -210,7 +225,6 @@ export function Toolbar({ markdown, setMarkdown }) {
       <Button variant="ghost" size="sm" title="Insert Image (Coming soon)">
         <Image className="h-4 w-4" />
       </Button>
-
       <Button variant="ghost" size="sm" className="text-primary" title="Insert Badge (Coming soon)">
         🏷️ Badge
       </Button>

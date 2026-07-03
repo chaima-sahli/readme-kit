@@ -1,4 +1,5 @@
 // src/App.jsx
+import { useRef } from 'react';
 import { ThemeProvider } from './components/theme-provider'
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from './components/ui/resizable'
 import { Button } from './components/ui/button'
@@ -7,10 +8,10 @@ import { Preview } from './components/Preview'
 import { GuidePopover } from './components/GuidePopover'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { Download, Copy } from 'lucide-react'
-import { Editor } from './components/Editor'; // ← Already imported!
+import { Editor } from './components/Editor';
 
 function App() {
-  // Use localStorage to auto-save the README content
+  const editorRef = useRef();
   const [markdown, setMarkdown] = useLocalStorage('readme-content', `# My Awesome Project
 
 ## Features
@@ -69,14 +70,22 @@ console.log("Hello World");
           </div>
         </header>
 
-        {/* Toolbar */}
-        <Toolbar markdown={markdown} setMarkdown={setMarkdown} />
+        {/* Toolbar - Now passing the ref */}
+        <Toolbar 
+          markdown={markdown} 
+          setMarkdown={setMarkdown} 
+          editorRef={editorRef}
+        />
 
         {/* Main Content - Split View */}
         <ResizablePanelGroup direction="horizontal" className="flex-1">
-          {/* Editor Panel - NOW USING THE EDITOR COMPONENT */}
+          {/* Editor Panel */}
           <ResizablePanel defaultSize={50} minSize={30}>
-            <Editor value={markdown} onChange={setMarkdown} />
+            <Editor 
+              ref={editorRef}
+              value={markdown} 
+              onChange={setMarkdown} 
+            />
           </ResizablePanel>
           
           <ResizableHandle withHandle />
