@@ -1,5 +1,5 @@
+// src/components/GuidePopover.jsx
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import { HelpCircle } from 'lucide-react';
 
@@ -7,61 +7,64 @@ export function GuidePopover() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="text-muted-foreground">
+        <button className="p-1 rounded text-[#6272a4] hover:text-[#f8f8f2] hover:bg-[#2a2a4a] transition-all duration-200">
           <HelpCircle className="h-4 w-4" />
-        </Button>
+        </button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 max-h-96 overflow-y-auto bg-card border-border">
-        <div className="space-y-4">
-          <h4 className="font-semibold text-primary">Markdown Cheatsheet</h4>
+      <PopoverContent className="w-72 max-h-96 overflow-y-auto bg-[#1a1a2e] border-[#2a2a4a] p-4">
+        <div className="space-y-3">
+          <h4 className="text-sm font-medium text-[#f8f8f2]">markdown cheat sheet</h4>
           
-          <div className="space-y-2 text-sm">
-            <div>
-              <span className="text-accent font-mono"># Heading 1</span>
-              <p className="text-muted-foreground">Main title</p>
+          <div className="space-y-1.5 text-sm">
+            <div className="flex justify-between items-center">
+              <code className="text-[#bd93f9]"># heading</code>
+              <span className="text-[10px] text-[#6272a4]">h1</span>
             </div>
-            <div>
-              <span className="text-accent font-mono">## Heading 2</span>
-              <p className="text-muted-foreground">Section header</p>
+            <div className="flex justify-between items-center">
+              <code className="text-[#bd93f9]">## heading</code>
+              <span className="text-[10px] text-[#6272a4]">h2</span>
             </div>
-            <div>
-              <span className="text-accent font-mono">**bold**</span>
-              <p className="text-muted-foreground">Bold text</p>
+            <div className="flex justify-between items-center">
+              <code className="text-[#bd93f9]">### heading</code>
+              <span className="text-[10px] text-[#6272a4]">h3</span>
             </div>
-            <div>
-              <span className="text-accent font-mono">*italic*</span>
-              <p className="text-muted-foreground">Italic text</p>
+            <Separator className="bg-[#2a2a4a]" />
+            <div className="flex justify-between items-center">
+              <code className="text-[#ff79c6]">**bold**</code>
+              <span className="text-[10px] text-[#6272a4]">ctrl+b</span>
             </div>
-            <div>
-              <span className="text-accent font-mono">- List item</span>
-              <p className="text-muted-foreground">Bulleted list</p>
+            <div className="flex justify-between items-center">
+              <code className="text-[#ff79c6]">*italic*</code>
+              <span className="text-[10px] text-[#6272a4]">ctrl+i</span>
             </div>
-            <div>
-              <span className="text-accent font-mono">1. Item</span>
-              <p className="text-muted-foreground">Numbered list</p>
+            <div className="flex justify-between items-center">
+              <code className="text-[#50fa7b]">`code`</code>
+              <span className="text-[10px] text-[#6272a4]">inline</span>
             </div>
-            <div>
-              <span className="text-accent font-mono">`code`</span>
-              <p className="text-muted-foreground">Inline code</p>
+            <Separator className="bg-[#2a2a4a]" />
+            <div className="flex justify-between items-center">
+              <code className="text-[#f1fa8c]">- item</code>
+              <span className="text-[10px] text-[#6272a4]">bullet</span>
             </div>
-            <div>
-              <span className="text-accent font-mono">```js\ncode\n```</span>
-              <p className="text-muted-foreground">Code block</p>
+            <div className="flex justify-between items-center">
+              <code className="text-[#f1fa8c]">1. item</code>
+              <span className="text-[10px] text-[#6272a4]">numbered</span>
             </div>
-            <div>
-              <span className="text-accent font-mono">[Link](url)</span>
-              <p className="text-muted-foreground">Hyperlink</p>
+            <Separator className="bg-[#2a2a4a]" />
+            <div className="flex justify-between items-center">
+              <code className="text-[#8be9fd]">[link](url)</code>
+              <span className="text-[10px] text-[#6272a4]">link</span>
             </div>
-            <div>
-              <span className="text-accent font-mono">![Alt](image.jpg)</span>
-              <p className="text-muted-foreground">Image</p>
+            <div className="flex justify-between items-center">
+              <code className="text-[#8be9fd]">![alt](img)</code>
+              <span className="text-[10px] text-[#6272a4]">image</span>
             </div>
           </div>
 
-          <Separator className="my-2" />
+          <Separator className="bg-[#2a2a4a]" />
           
-          <div className="text-xs text-muted-foreground">
-            💡 Tip: Highlight text and click a button to wrap it!
+          <div className="text-[10px] text-[#6272a4]">
+            💡 select text + click a button to wrap it
           </div>
         </div>
       </PopoverContent>

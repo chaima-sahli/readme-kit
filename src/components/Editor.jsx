@@ -166,7 +166,9 @@ export const Editor = forwardRef(({ value, onChange }, ref) => {
   };
 
   return (
-    <div className="h-full w-full overflow-auto bg-[#282a36]">
+    <div className="h-full w-full overflow-auto bg-[#0f0e1a] p-4">
+            <div className="h-full rounded-2xl overflow-hidden border border-[#2a2a4a]/30 bg-[#1a1a2e]">
+
       <CodeMirror
         ref={editorRef}
         value={value}
@@ -203,6 +205,7 @@ export const Editor = forwardRef(({ value, onChange }, ref) => {
         }}
         className="h-full text-sm font-mono"
       />
+      </div>
     </div>
   );
 });

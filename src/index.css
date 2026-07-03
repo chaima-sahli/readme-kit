@@ -1,4 +1,115 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  scroll-behavior: smooth;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a4a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a5a;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+
+/* Button animations */
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0px);
+}
+
+/* Dracula theme for selection */
+.cm-editor.cm-focused .cm-selectionBackground {
+  background-color: #6272a4 !important;
+}
+
+.cm-editor .cm-selectionBackground {
+  background-color: #44475a !important;
+}
+
+.cm-editor .cm-content ::selection {
+  background-color: #6272a4 !important;
+}
+
+.cm-editor .cm-activeLine {
+  background-color: rgba(68, 71, 90, 0.3) !important;
+}
+
+.cm-editor .cm-activeLineGutter {
+  background-color: rgba(68, 71, 90, 0.3) !important;
+}
+
+/* Resizable handle styling */
+[data-panel-resize-handle] {
+  background: #2a2a4a;
+  transition: background 0.2s ease;
+  width: 2px !important;
+}
+
+[data-panel-resize-handle]:hover {
+  background: #bd93f9;
+}
+
+[data-panel-resize-handle]::after {
+  background: #2a2a4a;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+/* Glow effects */
+.glow-purple {
+  box-shadow: 0 0 20px rgba(189, 147, 249, 0.15);
+}
+
+.glow-pink {
+  box-shadow: 0 0 20px rgba(255, 121, 198, 0.15);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(80, 250, 123, 0.15);
+}
+
+.glow-yellow {
+  box-shadow: 0 0 20px rgba(241, 250, 140, 0.15);
+}
 
 @layer base {
   :root {
