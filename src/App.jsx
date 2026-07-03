@@ -1,5 +1,4 @@
 // src/App.jsx
-import { useState } from 'react'
 import { ThemeProvider } from './components/theme-provider'
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from './components/ui/resizable'
 import { Button } from './components/ui/button'
