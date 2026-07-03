@@ -1,4 +1,3 @@
-// src/components/Toolbar.jsx
 import {
   Heading1,
   Heading2,
@@ -13,12 +12,12 @@ import {
   Image,
   FileCode,
   Sparkles,
-  Wand2,
+
 } from "lucide-react";
 import {  useCallback } from "react";
 import { motion } from "framer-motion";
 
-export function Toolbar({ markdown, setMarkdown, editorRef }) {
+export function Toolbar({ markdown, setMarkdown, editorRef, children }) {
 
   const buttonVariants = {
     idle: { scale: 1 },
@@ -386,18 +385,8 @@ export function Toolbar({ markdown, setMarkdown, editorRef }) {
         <span className="text-[10px] font-medium">badge</span>
       </motion.button>
 
-      {/* Magic Button */}
-      <motion.button
-        variants={buttonVariants}
-        initial="idle"
-        whileHover="hover"
-        whileTap="tap"
-        className="p-1.5 rounded-xl text-[#6272a4] hover:text-[#bd93f9] hover:bg-[#2a2a4a]/50 transition-all duration-200 flex items-center gap-1.5 text-xs px-2 ml-auto"
-        title="AI Magic (coming soon)"
-      >
-        <Wand2 className="h-3.5 w-3.5" />
-        <span className="text-[10px] font-medium">magic</span>
-      </motion.button>
+     
+      {children}
     </motion.div>
   );
 }
