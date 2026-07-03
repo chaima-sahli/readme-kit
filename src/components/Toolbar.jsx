@@ -1,98 +1,239 @@
 // src/components/Toolbar.jsx
-import { Button } from './ui/button'
-import { Separator } from './ui/separator'
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 import {
-  Heading1, Heading2, Heading3,
-  Bold, Italic, Code,
-  List, ListOrdered,
-  Table, Link, Image,
-  
-} from 'lucide-react'
+  Heading1,
+  Heading2,
+  Heading3,
+  Bold,
+  Italic,
+  Code,
+  List,
+  ListOrdered,
+  Table,
+  Link,
+  Image,
+} from "lucide-react";
 
 export function Toolbar({ markdown, setMarkdown }) {
-  // Function to insert markdown at cursor position
-  const insertMarkdown = (syntax, wrap = false) => {
-    const textarea = document.querySelector('textarea');
+  // Function to get current textarea and selection
+  const getTextarea = () => document.querySelector("textarea");
+
+  // Function to wrap selected text or insert at cursor
+
+  const wrapText = (prefix, suffix = "") => {
+    const textarea = document.querySelector("textarea");
     if (!textarea) return;
 
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selectedText = markdown.substring(start, end);
-    
+
     let newText;
-    if (wrap && selectedText) {
-      // Wrap selected text (e.g., **bold**)
-      newText = markdown.substring(0, start) + 
-                syntax + selectedText + syntax + 
-                markdown.substring(end);
+    let cursorOffset = 0;
+
+    if (selectedText) {
+      // If text is selected, wrap it
+      newText =
+        markdown.substring(0, start) +
+        prefix +
+        selectedText +
+        suffix +
+        markdown.substring(end);
+      // Place cursor after the wrapped text
+      cursorOffset = prefix.length + selectedText.length + suffix.length;
     } else {
-      // Insert at cursor (e.g., # heading)
-      newText = markdown.substring(0, start) + 
-                syntax + 
-                markdown.substring(end);
+      // If no text selected, insert prefix and suffix with cursor in between
+      newText =
+        markdown.substring(0, start) +
+        prefix +
+        suffix +
+        markdown.substring(end);
+      // Place cursor between prefix and suffix
+      cursorOffset = prefix.length;
     }
-    
+
     setMarkdown(newText);
-    
+
     // Set cursor position after insertion
     setTimeout(() => {
-      const newCursorPos = start + syntax.length;
+      const newCursorPos = start + cursorOffset;
       textarea.selectionStart = newCursorPos;
       textarea.selectionEnd = newCursorPos;
       textarea.focus();
     }, 0);
   };
+  // Insert heading at current line
+  const insertHeading = (level) => {
+    const textarea = getTextarea();
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const lineStart = markdown.lastIndexOf("\n", start - 1) + 1;
+    const lineEnd = markdown.indexOf("\n", start);
+    const currentLine = markdown.substring(
+      lineStart,
+      lineEnd === -1 ? markdown.length : lineEnd,
+    );
+
+    // Check if the line already starts with #s
+    const headingMatch = currentLine.match(/^(#+)\s*/);
+    const newPrefix = "#".repeat(level) + " ";
+
+    let newText;
+    if (headingMatch) {
+      // Replace existing heading level
+      newText =
+        markdown.substring(0, lineStart) +
+        newPrefix +
+        currentLine.substring(headingMatch[0].length) +
+        markdown.substring(lineEnd === -1 ? markdown.length : lineEnd);
+    } else {
+      // Insert new heading
+      newText =
+        markdown.substring(0, lineStart) +
+        newPrefix +
+        currentLine +
+        markdown.substring(lineEnd === -1 ? markdown.length : lineEnd);
+    }
+
+    setMarkdown(newText);
+
+    // Focus back on textarea
+    setTimeout(() => textarea.focus(), 0);
+  };
+
+  // Insert list item
+  const insertListItem = (ordered = false) => {
+    const textarea = getTextarea();
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const lineStart = markdown.lastIndexOf("\n", start - 1) + 1;
+    const currentLine = markdown.substring(lineStart, start);
+
+    // Check if we're on an empty line or start of line
+    const isStartOfLine = currentLine.trim() === "";
+
+    let newText;
+    if (isStartOfLine) {
+      // Insert new list item at current line
+      const prefix = ordered ? "1. " : "- ";
+      newText =
+        markdown.substring(0, lineStart) +
+        prefix +
+        markdown.substring(lineStart);
+    } else {
+      // Insert new list item on a new line
+      const prefix = ordered ? "1. " : "- ";
+      newText =
+        markdown.substring(0, start) +
+        "\n" +
+        prefix +
+        markdown.substring(start);
+    }
+
+    setMarkdown(newText);
+
+    // Focus back on textarea
+    setTimeout(() => textarea.focus(), 0);
+  };
 
   return (
-    <div className="border-b border-border p-2 flex flex-wrap gap-1 items-center bg-card/50">
+    <div className='border-b border-border p-2 flex flex-wrap gap-1 items-center bg-card/50'>
       {/* Headings */}
-      <Button variant="ghost" size="sm" onClick={() => insertMarkdown('# ')}>
-        <Heading1 className="h-4 w-4" />
+      <Button
+        variant='ghost'
+        size='sm'
+        onClick={() => insertHeading(1)}
+        title='Heading 1'
+      >
+        <Heading1 className='h-4 w-4' />
       </Button>
-      <Button variant="ghost" size="sm" onClick={() => insertMarkdown('## ')}>
-        <Heading2 className="h-4 w-4" />
+      <Button
+        variant='ghost'
+        size='sm'
+        onClick={() => insertHeading(2)}
+        title='Heading 2'
+      >
+        <Heading2 className='h-4 w-4' />
       </Button>
-      <Button variant="ghost" size="sm" onClick={() => insertMarkdown('### ')}>
-        <Heading3 className="h-4 w-4" />
+      <Button
+        variant='ghost'
+        size='sm'
+        onClick={() => insertHeading(3)}
+        title='Heading 3'
+      >
+        <Heading3 className='h-4 w-4' />
       </Button>
 
-      <Separator orientation="vertical" className="mx-1 h-6" />
+      <Separator orientation='vertical' className='mx-1 h-6' />
 
-      {/* Formatting */}
-      <Button variant="ghost" size="sm" onClick={() => insertMarkdown('**', true)}>
-        <Bold className="h-4 w-4" />
+      {/* Formatting - These now wrap selected text */}
+      <Button
+        variant='ghost'
+        size='sm'
+        onClick={() => wrapText("**", "**")}
+        title='Bold (Ctrl+B)'
+      >
+        <Bold className='h-4 w-4' />
       </Button>
-      <Button variant="ghost" size="sm" onClick={() => insertMarkdown('*', true)}>
-        <Italic className="h-4 w-4" />
+      <Button
+        variant='ghost'
+        size='sm'
+        onClick={() => wrapText("*", "*")}
+        title='Italic (Ctrl+I)'
+      >
+        <Italic className='h-4 w-4' />
       </Button>
-      <Button variant="ghost" size="sm" onClick={() => insertMarkdown('`', true)}>
-        <Code className="h-4 w-4" />
+      <Button
+        variant='ghost'
+        size='sm'
+        onClick={() => wrapText("`", "`")}
+        title='Inline Code'
+      >
+        <Code className='h-4 w-4' />
       </Button>
 
-      <Separator orientation="vertical" className="mx-1 h-6" />
+      <Separator orientation='vertical' className='mx-1 h-6' />
 
       {/* Lists */}
-      <Button variant="ghost" size="sm" onClick={() => insertMarkdown('- ')}>
-        <List className="h-4 w-4" />
+      <Button
+        variant='ghost'
+        size='sm'
+        onClick={() => insertListItem(false)}
+        title='Bullet List'
+      >
+        <List className='h-4 w-4' />
       </Button>
-      <Button variant="ghost" size="sm" onClick={() => insertMarkdown('1. ')}>
-        <ListOrdered className="h-4 w-4" />
-      </Button>
-
-      <Separator orientation="vertical" className="mx-1 h-6" />
-
-      {/* Insert */}
-      <Button variant="ghost" size="sm">
-        <Table className="h-4 w-4" />
-      </Button>
-      <Button variant="ghost" size="sm">
-        <Link className="h-4 w-4" />
-      </Button>
-      <Button variant="ghost" size="sm">
-        <Image className="h-4 w-4" />
+      <Button
+        variant='ghost'
+        size='sm'
+        onClick={() => insertListItem(true)}
+        title='Numbered List'
+      >
+        <ListOrdered className='h-4 w-4' />
       </Button>
 
-      <Button variant="ghost" size="sm" className="text-primary">
+      <Separator orientation='vertical' className='mx-1 h-6' />
+
+      {/* Insert - Placeholders for now */}
+      <Button variant='ghost' size='sm' title='Insert Table (Coming soon)'>
+        <Table className='h-4 w-4' />
+      </Button>
+      <Button variant='ghost' size='sm' title='Insert Link (Coming soon)'>
+        <Link className='h-4 w-4' />
+      </Button>
+      <Button variant='ghost' size='sm' title='Insert Image (Coming soon)'>
+        <Image className='h-4 w-4' />
+      </Button>
+
+      <Button
+        variant='ghost'
+        size='sm'
+        className='text-primary'
+        title='Insert Badge (Coming soon)'
+      >
         🏷️ Badge
       </Button>
     </div>
