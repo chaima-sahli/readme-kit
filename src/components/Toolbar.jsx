@@ -77,36 +77,50 @@ export function Toolbar({ markdown, setMarkdown, editorRef }) {
 
   // Insert heading
   const insertHeading = (level) => {
-    const view = getView();
-    if (!view) {
-      setMarkdown(markdown + '\n' + '#'.repeat(level) + ' ');
-      return;
-    }
-    
-    const { start } = getSelection();
-    const lineStart = markdown.lastIndexOf('\n', start - 1) + 1;
-    const lineEnd = markdown.indexOf('\n', start);
-    const currentLine = markdown.substring(lineStart, lineEnd === -1 ? markdown.length : lineEnd);
-    
-    const headingMatch = currentLine.match(/^(#+)\s*/);
-    const newPrefix = '#'.repeat(level) + ' ';
-    
-    let newText;
-    if (headingMatch) {
-      newText = markdown.substring(0, lineStart) + 
-                newPrefix + 
-                currentLine.substring(headingMatch[0].length) + 
-                markdown.substring(lineEnd === -1 ? markdown.length : lineEnd);
-    } else {
-      newText = markdown.substring(0, lineStart) + 
-                newPrefix + 
-                currentLine + 
-                markdown.substring(lineEnd === -1 ? markdown.length : lineEnd);
-    }
-    
-    setMarkdown(newText);
-    setTimeout(() => view.focus(), 10);
-  };
+  const view = getView();
+  if (!view) {
+    setMarkdown(markdown + '\n' + '#'.repeat(level) + ' ');
+    return;
+  }
+  
+  const { start } = getSelection();
+  const lineStart = markdown.lastIndexOf('\n', start - 1) + 1;
+  const lineEnd = markdown.indexOf('\n', start);
+  const currentLine = markdown.substring(lineStart, lineEnd === -1 ? markdown.length : lineEnd);
+  
+  const headingMatch = currentLine.match(/^(#+)\s*/);
+  const newPrefix = '#'.repeat(level) + ' ';
+  
+  let newText;
+  let cursorOffset = 0;
+  
+  if (headingMatch) {
+    // Replace existing heading
+    newText = markdown.substring(0, lineStart) + 
+              newPrefix + 
+              currentLine.substring(headingMatch[0].length) + 
+              markdown.substring(lineEnd === -1 ? markdown.length : lineEnd);
+    // FIX: Cursor goes after the # and space
+    cursorOffset = lineStart + newPrefix.length;
+  } else {
+    // Insert new heading
+    newText = markdown.substring(0, lineStart) + 
+              newPrefix + 
+              currentLine + 
+              markdown.substring(lineEnd === -1 ? markdown.length : lineEnd);
+    // FIX: Cursor goes after the # and space
+    cursorOffset = lineStart + newPrefix.length + currentLine.length;
+  }
+  
+  setMarkdown(newText);
+  
+  setTimeout(() => {
+    view.focus();
+    view.dispatch({
+      selection: { anchor: cursorOffset, head: cursorOffset },
+    });
+  }, 10);
+};
 
   // Insert list item
   const insertListItem = (ordered = false) => {

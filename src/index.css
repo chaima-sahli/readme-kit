@@ -69,3 +69,31 @@
 
 
 
+
+/*! dracula mode*/
+.cm-editor.cm-focused .cm-selectionBackground {
+  background-color: #6272a4 !important;
+}
+.cm-editor .cm-selectionBackground {
+  background-color: #44475a !important;
+}
+.cm-editor .cm-selectionBackground {
+  background-color: #6272a4 !important;
+}
+
+.cm-editor.cm-focused .cm-selectionBackground {
+  background-color: #6272a4 !important;
+}
+
+.cm-editor .cm-content ::selection {
+  background-color: #6272a4 !important;
+}
+
+.cm-editor .cm-activeLine {
+  background-color: rgba(68, 71, 90, 0.3) !important;
+}
+
+.cm-editor .cm-activeLineGutter {
+  background-color: rgba(68, 71, 90, 0.3) !important;
+}
+

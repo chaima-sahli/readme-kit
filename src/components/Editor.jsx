@@ -5,7 +5,7 @@ import { EditorView } from '@codemirror/view';
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
 
-// === EDITOR CHROME (background, gutters, cursor, etc.) ===
+// === EDITOR CHROME ===
 const draculaChrome = EditorView.theme({
   '&': {
     backgroundColor: '#282a36',
@@ -23,16 +23,6 @@ const draculaChrome = EditorView.theme({
     backgroundColor: '#282a36',
     color: '#6272a4',
     borderRight: '1px solid #44475a',
-  },
-  '.cm-activeLine': {
-    backgroundColor: '#44475a',
-  },
-  '.cm-activeLineGutter': {
-    backgroundColor: '#44475a',
-    color: '#f8f8f2',
-  },
-  '.cm-selectionBackground': {
-    backgroundColor: '#44475a',
   },
   '.cm-cursor': {
     borderLeftColor: '#f8f8f2',
@@ -52,10 +42,9 @@ const draculaChrome = EditorView.theme({
     border: '1px solid #44475a',
   },
 }, {
-  dark: true, // tells CodeMirror this is a dark theme
+  dark: true,
 });
-
-// === SYNTAX HIGHLIGHTING (the actual token colors) ===
+// === SYNTAX HIGHLIGHTING ===
 const draculaHighlight = HighlightStyle.define([
   // Headings - Purple
   { tag: tags.heading1, color: '#bd93f9', fontWeight: 'bold', fontSize: '1.6em' },
@@ -183,11 +172,17 @@ export const Editor = forwardRef(({ value, onChange }, ref) => {
         value={value}
         height="100%"
         width="100%"
-        // No theme prop needed — we handle everything via extensions
         extensions={[
           markdown(),
           draculaChrome,
           syntaxHighlighting(draculaHighlight),
+          // FIX 2: Custom cursor behavior for headings
+          EditorView.updateListener.of((update) => {
+            // If the content changed and it was from a toolbar action
+            if (update.docChanged) {
+              // We'll handle cursor positioning in the toolbar
+            }
+          }),
         ]}
         onChange={(value) => onChange(value)}
         onMount={handleEditorMount}
