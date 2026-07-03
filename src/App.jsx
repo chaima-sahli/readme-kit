@@ -6,7 +6,7 @@ import { useLocalStorage } from './hooks/useLocalStorage';
 import { motion } from 'framer-motion';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { MagicButton } from './components/MagicButton';
+import { MagicButton } from './components/magic';
 import { EditorContainer } from './components/EditorContainer';
 import { PreviewContainer } from './components/PreviewContainer';
 
