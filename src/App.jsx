@@ -7,6 +7,7 @@ import { Preview } from './components/Preview'
 import { GuidePopover } from './components/GuidePopover'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { Download, Copy } from 'lucide-react'
+import { Editor } from './components/Editor'; // ← Already imported!
 
 function App() {
   // Use localStorage to auto-save the README content
@@ -43,7 +44,6 @@ console.log("Hello World");
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(markdown)
-      // You could add a toast notification here
       console.log('Copied!')
     } catch (err) {
       console.error('Failed to copy:', err)
@@ -74,20 +74,9 @@ console.log("Hello World");
 
         {/* Main Content - Split View */}
         <ResizablePanelGroup direction="horizontal" className="flex-1">
-          {/* Editor Panel */}
+          {/* Editor Panel - NOW USING THE EDITOR COMPONENT */}
           <ResizablePanel defaultSize={50} minSize={30}>
-            <div className="h-full relative">
-              <textarea
-                value={markdown}
-                onChange={(e) => setMarkdown(e.target.value)}
-                className="w-full h-full p-4 bg-background text-foreground resize-none outline-none font-mono text-sm"
-                placeholder="Write your README here..."
-                spellCheck="false"
-              />
-              <div className="absolute bottom-2 right-4 text-xs text-muted-foreground">
-                {markdown.split(/\s+/).filter(Boolean).length} words
-              </div>
-            </div>
+            <Editor value={markdown} onChange={setMarkdown} />
           </ResizablePanel>
           
           <ResizableHandle withHandle />

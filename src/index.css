@@ -66,3 +66,91 @@
     color: hsl(var(--foreground));
   }
 }
+
+
+/* CodeMirror Dark Theme Override */
+.cm-editor {
+  background: #282a36 !important;
+  height: 100% !important;
+}
+
+.cm-editor .cm-content {
+  background: #282a36 !important;
+  color: #f8f8f2 !important;
+  padding: 16px !important;
+}
+
+.cm-editor .cm-gutters {
+  background: #282a36 !important;
+  color: #6272a4 !important;
+  border-right: 1px solid #44475a !important;
+}
+
+.cm-editor .cm-activeLine {
+  background: #44475a !important;
+}
+
+.cm-editor .cm-cursor {
+  border-left-color: #f8f8f2 !important;
+}
+
+/* Syntax Colors */
+.cm-editor .cm-heading {
+  color: #bd93f9 !important;
+  font-weight: bold !important;
+}
+
+.cm-editor .cm-strong {
+  color: #ff79c6 !important;
+}
+
+.cm-editor .cm-emphasis {
+  color: #ff79c6 !important;
+  font-style: italic !important;
+}
+
+.cm-editor .cm-code {
+  color: #50fa7b !important;
+}
+
+.cm-editor .cm-link {
+  color: #8be9fd !important;
+  text-decoration: underline !important;
+}
+
+.cm-editor .cm-list {
+  color: #f1fa8c !important;
+}
+
+.cm-editor .cm-url {
+  color: #8be9fd !important;
+}
+
+.cm-editor .cm-comment {
+  color: #6272a4 !important;
+}
+
+.cm-editor .cm-number {
+  color: #bd93f9 !important;
+}
+
+.cm-editor .cm-keyword {
+  color: #ff79c6 !important;
+}
+
+.cm-editor .cm-string {
+  color: #f1fa8c !important;
+}
+
+.cm-editor .cm-meta {
+  color: #6272a4 !important;
+}
+
+/* Selection */
+.cm-editor .cm-selectionBackground {
+  background: #44475a !important;
+}
+
+.cm-editor .cm-selectionMatch {
+  background: #44475a !important;
+}
