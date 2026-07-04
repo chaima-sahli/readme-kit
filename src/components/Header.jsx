@@ -30,7 +30,7 @@ export function Header({
           </div>
           <div>
             <h1 className="text-xl font-semibold text-[#f8f8f2] tracking-tight">
-              README Builder
+              README Kit
             </h1>
             <p className="text-xs text-[#6272a4] flex items-center gap-1">
               <Sparkles className="h-3 w-3 text-[#f1fa8c]" />
