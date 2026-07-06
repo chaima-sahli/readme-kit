@@ -17,7 +17,7 @@
   <a href="#-features">Features</a> •
   <a href="#-tech-stack">Tech Stack</a> •
   <a href="#-quick-start">Quick Start</a> •
-  <a href="#-author">Author</a>
+  <a href="#author">Author</a>
   
   
   <br />
@@ -37,6 +37,13 @@
 ## 🎯 Live Demo
 
 Try it here!: https://readme-kit-orpin.vercel.app
+
+
+
+## 🎥 Video Demo
+https://github.com/user-attachments/assets/b95ddd36-6500-4939-b177-df5b2d193646
+
+
 
 ## ✨ Features
 
