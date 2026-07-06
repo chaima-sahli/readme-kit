@@ -209,3 +209,66 @@ button:active {
   background-color: rgba(68, 71, 90, 0.3) !important;
 }
 
+
+
+/*! Toast Custom Styles */
+.toast-container {
+  --toast-bg: #1a1a2e !important;
+  --toast-border: #4a4a79 !important;
+  --toast-text: #f8f8f2 !important;
+}
+
+.toast-custom {
+  background: #2a2a4a !important;
+  border: 1px solid #2a2a4a !important;
+  color: #f8f8f2 !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* Success toast */
+.toast-custom[data-type="success"] {
+  border-color: #50fa7b !important;
+}
+
+/* Error toast */
+.toast-custom[data-type="error"] {
+  border-color: #ff5555 !important;
+}
+
+/* Info toast */
+.toast-custom[data-type="info"] {
+  border-color: #8be9fd !important;
+}
+
+/* Loading toast */
+.toast-custom[data-type="loading"] {
+  border-color: #bd93f9 !important;
+}
+
+/* Toast title */
+.toast-custom .sonner-title {
+  color: #f8f8f2 !important;
+  font-weight: 500 !important;
+}
+
+/* Toast description */
+.toast-custom .sonner-description {
+  color: #6272a4 !important;
+}
+
+/* Toast close button */
+.toast-custom .sonner-close-button {
+  color: #6272a4 !important;
+  background: #2a2a4a !important;
+  border-radius: 8px !important;
+  padding: 4px !important;
+  transition: all 0.2s !important;
+}
+
+.toast-custom .sonner-close-button:hover {
+  color: #f8f8f2 !important;
+  background: #3a3a5a !important;
+}
