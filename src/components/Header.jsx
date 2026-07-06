@@ -27,8 +27,8 @@ export function Header({
           whileHover={{ scale: 1.05, rotate: -5 }}
           className="flex items-center gap-3"
         >
-          <div className="w-11 h-11 rounded-2xl bg-linear-to-br from-[#bd93f9] to-[#ff79c6] flex items-center justify-center shadow-lg shadow-purple-500/10">
-            <span className="text-white text-xl">📝</span>
+          <div className="w-11 h-11 rounded-2xl bg-[#282a36] border border-[#bd93f9]/30 flex items-center justify-center shadow-lg shadow-purple-500/10">
+            <span className="text-2xl">📝</span>
           </div>
           <div>
             <h1 className="text-xl font-semibold text-[#f8f8f2] tracking-tight">
@@ -36,7 +36,7 @@ export function Header({
             </h1>
             <p className="text-xs text-[#6272a4] flex items-center gap-1">
               <Sparkles className="h-3 w-3 text-[#f1fa8c]" />
-              make it shine ✨
+              Build better docs
             </p>
           </div>
         </motion.div>
