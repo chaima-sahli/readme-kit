@@ -291,7 +291,7 @@ export function Toolbar({ markdown, setMarkdown, editorRef, children }) {
           whileTap='tap'
           onClick={() => insertText("**", "**")}
           className='p-1.5 rounded-xl text-[#6272a4] hover:text-[#ff79c6] hover:bg-[#2a2a4a]/50 transition-all duration-200'
-          title='Bold'
+          title='Bold (ctrl+B)'
         >
           <Bold className='h-4 w-4' />
         </motion.button>
@@ -302,7 +302,7 @@ export function Toolbar({ markdown, setMarkdown, editorRef, children }) {
           whileTap='tap'
           onClick={() => insertText("*", "*")}
           className='p-1.5 rounded-xl text-[#6272a4] hover:text-[#ff79c6] hover:bg-[#2a2a4a]/50 transition-all duration-200'
-          title='Italic'
+          title='Italic (ctrl+I)'
         >
           <Italic className='h-4 w-4' />
         </motion.button>

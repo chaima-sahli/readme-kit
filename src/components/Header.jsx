@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { Sparkles, Save, Download, Copy } from 'lucide-react';
 import { GuidePopover } from './GuidePopover';
 import { ViewToggle } from './ViewToggle';
+import { KeyboardShortcutsGuide } from './KeyboardShortcutsGuide';
+
 
 export function Header({ 
   activeTab, 
@@ -25,7 +27,7 @@ export function Header({
           whileHover={{ scale: 1.05, rotate: -5 }}
           className="flex items-center gap-3"
         >
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#bd93f9] to-[#ff79c6] flex items-center justify-center shadow-lg shadow-purple-500/10">
+          <div className="w-11 h-11 rounded-2xl bg-linear-to-br from-[#bd93f9] to-[#ff79c6] flex items-center justify-center shadow-lg shadow-purple-500/10">
             <span className="text-white text-xl">📝</span>
           </div>
           <div>
@@ -39,6 +41,7 @@ export function Header({
           </div>
         </motion.div>
         <GuidePopover />
+        <KeyboardShortcutsGuide/>
       </div>
 
       {/* Right side */}

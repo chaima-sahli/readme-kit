@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState, useMemo, useEffect } from 'react';
 import { ThemeProvider } from './components/theme-provider';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from './components/ui/resizable';
 import { Toolbar } from './components/Toolbar';
@@ -9,6 +9,7 @@ import { Footer } from './components/Footer';
 import { MagicButton } from './components/magic';
 import { EditorContainer } from './components/EditorContainer';
 import { PreviewContainer } from './components/PreviewContainer';
+import { Toaster, toast } from 'sonner';
 
 function App() {
   const editorRef = useRef();
@@ -40,30 +41,123 @@ console.log("Hello World");
   );
   const charCount = useMemo(() => markdown.length, [markdown]);
 
+  
+
   const exportMarkdown = () => {
-    const blob = new Blob([markdown], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'README.md';
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const blob = new Blob([markdown], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'README.md';
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('README exported successfully! 📄', {
+        icon: '🎉',
+        duration: 3000,
+      });
+    } catch (error) {
+      toast.error('Failed to export README', {
+        description: error.message,
+      });
+    }
   };
+
 
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(markdown);
       setShowCopied(true);
+      toast.success('Copied to clipboard! ✨', {
+        icon: '📋',
+        duration: 2000,
+      });
       setTimeout(() => setShowCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      toast.error('Failed to copy', {
+        description: 'Please try again',
+        
+      });
+      console.log(err.description);
     }
   };
 
-  const handleSave = () => {
+ const handleSave = () => {
     setIsSaving(true);
-    setTimeout(() => setIsSaving(false), 1000);
+    toast.info('Saving...', {
+      id: 'saving-toast',
+      duration: 1000,
+    });
+    setTimeout(() => {
+      setIsSaving(false);
+      toast.success('Saved successfully! 💾', {
+        id: 'saving-toast',
+        icon: '✅',
+        duration: 2000,
+      });
+    }, 1000);
   };
+
+
+  //  Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl+S or Cmd+S - Save
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        handleSave();
+      }
+      
+      // Ctrl+C or Cmd+C - Copy (only if text is selected)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+        // Let default copy work, but show a toast
+        setTimeout(() => {
+          if (window.getSelection().toString()) {
+            toast.info('Text copied! 📋', { duration: 1500 });
+          }
+        }, 100);
+      }
+      
+      // Ctrl+Shift+E - Focus Editor
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'E') {
+        e.preventDefault();
+        setActiveTab('editor');
+        setTimeout(() => {
+          const textarea = document.querySelector('.cm-content');
+          if (textarea) textarea.focus();
+        }, 100);
+        toast.info('Switched to Editor mode', { duration: 1500 });
+      }
+      
+      // Ctrl+Shift+P - Focus Preview
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'P') {
+        e.preventDefault();
+        setActiveTab('preview');
+        toast.info('Switched to Preview mode', { duration: 1500 });
+      }
+      
+      // Ctrl+Shift+S - Switch to Split view
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'S') {
+        e.preventDefault();
+        setActiveTab('split');
+        toast.info('Switched to Split view', { duration: 1500 });
+      }
+      
+      // Ctrl+Shift+V - Toggle between Split and Preview
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'V') {
+        e.preventDefault();
+        const nextTab = activeTab === 'split' ? 'preview' : 'split';
+        setActiveTab(nextTab);
+        toast.info(`Switched to ${nextTab === 'split' ? 'Split' : 'Preview'} view`, { 
+          duration: 1500 
+        });
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [activeTab]);
+
 
   // Helper to render content based on active tab
   const renderContent = () => {
@@ -91,6 +185,20 @@ console.log("Hello World");
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      {/*  Toast Container */}
+      <Toaster 
+        position="bottom-right"
+        theme="dark"
+        richColors
+        closeButton
+        toastOptions={{
+          style: {
+            background: '#1a1a2e',
+            border: '1px solid #2a2a4a',
+            color: '#f8f8f2',
+          },
+        }}
+      />
       <div className="h-screen flex flex-col bg-[#0f0e1a]">
         <Header 
           activeTab={activeTab}
