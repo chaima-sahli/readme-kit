@@ -5,25 +5,19 @@ import { X, Link as LinkIcon, Check, Globe, AtSign } from 'lucide-react';
 export function LinkDialog({ isOpen, onClose, onInsert }) {
   const [text, setText] = useState('');
   const [url, setUrl] = useState('');
-  const [openInNewTab, setOpenInNewTab] = useState(true);
 
   useEffect(() => {
     if (isOpen) {
       setText('');
       setUrl('');
-      setOpenInNewTab(true);
     }
   }, [isOpen]);
 
   const handleInsert = () => {
     if (!text.trim() || !url.trim()) return;
     
-    let markdown;
-    if (openInNewTab) {
-      markdown = `[${text}](${url}){target="_blank"}`;
-    } else {
-      markdown = `[${text}](${url})`;
-    }
+    // Simple markdown link without target attribute
+    const markdown = `[${text}](${url})`;
     onInsert(markdown);
     onClose();
   };
@@ -91,17 +85,8 @@ export function LinkDialog({ isOpen, onClose, onInsert }) {
               />
             </div>
 
-            <div className="flex items-center gap-2 bg-[#0f0e1a] rounded-xl p-2 border border-[#2a2a4a]/30">
-              <input
-                type="checkbox"
-                checked={openInNewTab}
-                onChange={(e) => setOpenInNewTab(e.target.checked)}
-                id="newTab"
-                className="accent-[#8be9fd]"
-              />
-              <label htmlFor="newTab" className="text-xs text-[#f8f8f2]">
-                Open in new tab
-              </label>
+            <div className="text-[10px] text-[#6272a4] bg-[#0f0e1a] rounded-xl p-3 border border-[#2a2a4a]/30">
+              💡 Links open in the same tab by default
             </div>
           </div>
 

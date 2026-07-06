@@ -7,7 +7,6 @@ export function ImageDialog({ isOpen, onClose, onInsert }) {
   const [alt, setAlt] = useState('');
   const [url, setUrl] = useState('');
   const [width, setWidth] = useState('');
-  const [height, setHeight] = useState('');
   const [caption, setCaption] = useState('');
 
   useEffect(() => {
@@ -15,7 +14,6 @@ export function ImageDialog({ isOpen, onClose, onInsert }) {
       setAlt('');
       setUrl('');
       setWidth('');
-      setHeight('');
       setCaption('');
     }
   }, [isOpen]);
@@ -23,13 +21,22 @@ export function ImageDialog({ isOpen, onClose, onInsert }) {
   const handleInsert = () => {
     if (!url.trim()) return;
     
-    let markdown = `![${alt || 'Image'}](${url.trim()})`;
-    if (width || height) {
-      markdown += `{width="${width || 'auto'}" height="${height || 'auto'}"}`;
+    let markdown = '';
+    
+    // Use HTML img tag for proper sizing
+    if (width) {
+      // HTML img tag with width
+      markdown = `<img src="${url.trim()}" alt="${alt || 'Image'}" width="${width}" />`;
+    } else {
+      // Standard markdown image
+      markdown = `![${alt || 'Image'}](${url.trim()})`;
     }
+    
+    // Add caption if provided
     if (caption) {
-      markdown += `\n*${caption}*`;
+      markdown += `\n\n*${caption}*`;
     }
+    
     onInsert(markdown);
     onClose();
   };
@@ -129,31 +136,20 @@ export function ImageDialog({ isOpen, onClose, onInsert }) {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-xs font-medium text-[#6272a4] mb-1.5 block">
-                  Width (optional)
-                </label>
-                <input
-                  type="text"
-                  value={width}
-                  onChange={(e) => setWidth(e.target.value)}
-                  placeholder="300px or 50%"
-                  className="w-full bg-[#0f0e1a] border border-[#2a2a4a]/50 rounded-xl px-4 py-2 text-sm text-[#f8f8f2] placeholder-[#6272a4] focus:outline-none focus:border-[#50fa7b] transition-colors"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-[#6272a4] mb-1.5 block">
-                  Height (optional)
-                </label>
-                <input
-                  type="text"
-                  value={height}
-                  onChange={(e) => setHeight(e.target.value)}
-                  placeholder="200px or auto"
-                  className="w-full bg-[#0f0e1a] border border-[#2a2a4a]/50 rounded-xl px-4 py-2 text-sm text-[#f8f8f2] placeholder-[#6272a4] focus:outline-none focus:border-[#50fa7b] transition-colors"
-                />
-              </div>
+            <div>
+              <label className="text-xs font-medium text-[#6272a4] mb-1.5 block">
+                Width (optional, e.g., 300px or 50%)
+              </label>
+              <input
+                type="text"
+                value={width}
+                onChange={(e) => setWidth(e.target.value)}
+                placeholder="300px"
+                className="w-full bg-[#0f0e1a] border border-[#2a2a4a]/50 rounded-xl px-4 py-2.5 text-sm text-[#f8f8f2] placeholder-[#6272a4] focus:outline-none focus:border-[#50fa7b] transition-colors"
+              />
+              <p className="text-[9px] text-[#6272a4] mt-1">
+                💡 Leave empty for default size
+              </p>
             </div>
 
             <div>

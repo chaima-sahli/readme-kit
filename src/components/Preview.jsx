@@ -3,21 +3,21 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { motion } from "framer-motion";
+import rehypeRaw from "rehype-raw";
 
 export function Preview({ markdown }) {
   return (
-    // Changed from p-8 to p-6 and added h-full
     <div className='h-full overflow-auto bg-[#0f0e1a] p-6'>
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        // Added h-full here too
         className='h-full prose prose-invert max-w-3xl mx-auto prose-headings:text-[#bd93f9] prose-strong:text-[#ff79c6] prose-code:text-[#50fa7b] prose-a:text-[#8be9fd] prose-a:no-underline hover:prose-a:underline prose-ul:text-[#f1fa8c] prose-ol:text-[#f1fa8c] prose-blockquote:text-[#f1fa8c] prose-blockquote:border-l-[#bd93f9]'
       >
         <div className='bg-[#1a1a2e]/50 rounded-3xl p-8 border border-[#2a2a4a]/30 backdrop-blur-sm min-h-full'>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
             components={{
               code({ node, inline, className, children, ...props }) {
                 const match = /language-(\w+)/.exec(className || "");
@@ -141,19 +141,28 @@ export function Preview({ markdown }) {
               hr() {
                 return <hr className='border-[#2a2a4a]/50 my-8' />;
               },
-              img({ src, alt, ...props }) {
+              img({ src, alt, width, ...props }) {
+                // Check if it's a shields.io badge
                 if (src && src.includes("shields.io")) {
                   return (
                     <img
                       src={src}
                       alt={alt}
                       className='inline-block h-5 mr-1 align-middle'
+                      width={width}
                       {...props}
                     />
                   );
                 }
+                // Regular image with optional width
                 return (
-                  <img src={src} alt={alt} className='max-w-full' {...props} />
+                  <img
+                    src={src}
+                    alt={alt}
+                    className='max-w-full rounded-lg'
+                    width={width}
+                    {...props}
+                  />
                 );
               },
             }}
