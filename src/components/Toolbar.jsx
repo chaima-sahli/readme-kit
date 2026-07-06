@@ -11,7 +11,6 @@ import {
   Link,
   Image,
   FileCode,
-  Sparkles,
 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
@@ -417,18 +416,7 @@ export function Toolbar({ markdown, setMarkdown, editorRef, children }) {
         onInsert={insertImage}
       />
 
-      {/* Badge Button */}
-      <motion.button
-        variants={buttonVariants}
-        initial='idle'
-        whileHover='hover'
-        whileTap='tap'
-        className='p-1.5 rounded-xl text-[#6272a4] hover:text-[#f1fa8c] hover:bg-[#2a2a4a]/50 transition-all duration-200 flex items-center gap-1.5 text-xs px-2'
-        title='Badge (soon)'
-      >
-        <Sparkles className='h-3.5 w-3.5' />
-        <span className='text-[10px] font-medium'>badge</span>
-      </motion.button>
+    
 
       {children}
     </motion.div>
