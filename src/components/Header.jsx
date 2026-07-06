@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Sparkles, Save, Download, Copy } from 'lucide-react';
 import { GuidePopover } from './GuidePopover';
 import { ViewToggle } from './ViewToggle';
-import { KeyboardShortcutsGuide } from './KeyboardShortcutsGuide';
+import { KeyboardShortcutsPopover } from './KeyboardShortcutsPopover';
 
 
 export function Header({ 
@@ -41,7 +41,7 @@ export function Header({
           </div>
         </motion.div>
         <GuidePopover />
-        <KeyboardShortcutsGuide/>
+        <KeyboardShortcutsPopover/>
       </div>
 
       {/* Right side */}
